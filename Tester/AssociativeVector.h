@@ -29,10 +29,36 @@ public:
 		{}
 
 		Pair(
-			const std::pair<KEY, VALUE>& p
+			const std::pair<KEY, VALUE>& other
 		):
-			std::pair<KEY, VALUE>(p.first, p.second)
+			std::pair<KEY, VALUE>(other.first, other.second)
 		{}
+
+		/**
+			Assignment operator overload<br>
+			for constructing from const array
+		*/
+		Pair& operator=(
+			const Pair& other
+		){
+			if ( this == &other ){
+				return *this;
+			}
+			*this = Pair(other);
+			return *this;
+		}
+
+		/**
+			Assignment operator overload from std::pair<br>
+			for make_pair macro
+		*/
+		Pair& operator=(
+			const std::pair<KEY, VALUE>& other
+		){
+			first = other.first;
+			second = other.second;
+			return *this;
+		}
 
 		/**
 			Less operator overload
@@ -63,14 +89,14 @@ public:
 	AssociativeVector(InputIterator First, InputIterator Last):
 		_list(First, Last)
 	{
-		std::sort(_list.begin(), _list.end());
+//		std::sort(_list.begin(), _list.end());
 	}
 	
 	template<size_t SIZE>
 	AssociativeVector(const Pair (&array)[SIZE]):
 		_list(array, array + SIZE)
 	{
-		std::sort(_list.begin(), _list.end());
+//		std::sort(_list.begin(), _list.end());
 	}
 		
 	/**
