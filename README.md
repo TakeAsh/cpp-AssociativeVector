@@ -1,4 +1,3 @@
-AssociativeVector
-=================
+﻿#AssociativeVector
 
-Associative array implemented by std::vector.
+* Associative array implemented by std::vector.
