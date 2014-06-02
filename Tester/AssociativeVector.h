@@ -35,16 +35,38 @@ public:
 		{}
 
 		/**
+			Move constructor
+		*/
+		Pair(
+			Pair&& other
+		):
+			std::pair<KEY, VALUE>()
+		{
+			*this = std::move(other);
+		}
+
+		/**
+			Move assignment operator
+		*/
+		Pair& operator=(
+			Pair&& other
+		){
+			if ( this != &other ){
+				*this = std::move(other);
+			}
+			return *this;
+		}
+
+		/**
 			Assignment operator overload<br>
 			for constructing from const array
 		*/
 		Pair& operator=(
 			const Pair& other
 		){
-			if ( this == &other ){
-				return *this;
+			if ( this != &other ){
+				*this = Pair(other);
 			}
-			*this = Pair(other);
 			return *this;
 		}
 
@@ -88,14 +110,14 @@ public:
 	AssociativeVector(InputIterator First, InputIterator Last):
 		_list(First, Last)
 	{
-//		std::sort(_list.begin(), _list.end());
+		std::sort(_list.begin(), _list.end());
 	}
 	
 	template<size_t SIZE>
 	AssociativeVector(const Pair (&array)[SIZE]):
 		_list(array, array + SIZE)
 	{
-//		std::sort(_list.begin(), _list.end());
+		std::sort(_list.begin(), _list.end());
 	}
 		
 	/**
@@ -111,8 +133,7 @@ public:
 		@retval	==NULL	not found
 	*/
 	const VALUE* operator[](const KEY Key) const {
-		InnerVector::const_iterator itr =
-			lower_bound(_list.begin(), _list.end(), Pair(Key));
+		auto itr = lower_bound(_list.begin(), _list.end(), Pair(Key));
 		return itr != _list.end()
 			? &itr->second
 			: NULL;
@@ -124,8 +145,7 @@ public:
 		@retval	==NULL	not found
 	*/
 	VALUE* operator[](const KEY Key){
-		InnerVector::iterator itr =
-			lower_bound(_list.begin(), _list.end(), Pair(Key));
+		auto itr = lower_bound(_list.begin(), _list.end(), Pair(Key));
 		return itr != _list.end()
 			? &itr->second
 			: NULL;
