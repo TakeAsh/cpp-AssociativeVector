@@ -31,7 +31,7 @@ public:
 		Pair(
 			const std::pair<KEY, VALUE>& other
 		):
-			std::pair<KEY, VALUE>(other.first, other.second)
+			std::pair<KEY, VALUE>(other)
 		{}
 
 		/**
@@ -55,8 +55,7 @@ public:
 		Pair& operator=(
 			const std::pair<KEY, VALUE>& other
 		){
-			first = other.first;
-			second = other.second;
+			*(std::pair<KEY, VALUE>*)this = other;
 			return *this;
 		}
 
