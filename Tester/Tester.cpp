@@ -15,21 +15,21 @@
 using namespace std;
 using namespace TakeAsh;
 
-#define assertAssociativeVector(Expected, Actual, AVec)	\
+#define assertAssociativeVector(Expected, Actual)	\
 	{	\
 		WIN_TRACE(_T("  size:%d\n"), Expected.count);	\
 		WIN_ASSERT_EQUAL(Expected.count, Actual.size());	\
 		size_t i1 = 0;	\
 		WIN_TRACE(_T("  ++itr\n"));	\
-		for(AVec::const_iterator itr=Actual.begin(); itr != Actual.end(); ++itr, ++i1){	\
-			const AVec::value_type& value = Expected.list[i1];	\
+		for(auto itr=Actual.begin(); itr != Actual.end(); ++itr, ++i1){	\
+			const auto& value = Expected.list[i1];	\
 			WIN_TRACE(_T("  %d:'%s'\n"), i1, value.second.name.c_str());	\
 			WIN_ASSERT_STRING_EQUAL(value.second.name.c_str(), itr->second.name.c_str());	\
 			WIN_ASSERT_STRING_EQUAL(value.second.url.c_str(), itr->second.url.c_str());	\
 			WIN_ASSERT_STRING_EQUAL(value.second.lang.c_str(), itr->second.lang.c_str());	\
 		}	\
 		for(size_t i2=0; i2 < Expected.count; ++i2){	\
-			const AVec::value_type& value = Expected.list[i2];	\
+			const auto& value = Expected.list[i2];	\
 			WIN_TRACE(_T("  [%s]:'%s'\n"), value.first.c_str(), value.second.name.c_str());	\
 			const HostInfo* pHostInfo = Actual[value.first];	\
 			WIN_ASSERT_NOT_NULL(pHostInfo);	\
@@ -105,9 +105,9 @@ BEGIN_TEST(AssociativeVector_02_ConstructFromArray_NotConst)
 		expected.name.c_str()
 	);
 	const HostMap hostMap1(expected.list, expected.list + expected.count);
-	assertAssociativeVector(expected, hostMap1, HostMap);
+	assertAssociativeVector(expected, hostMap1);
 	const HostMap hostMap2(rawList1);
-	assertAssociativeVector(expected, hostMap2, HostMap);
+	assertAssociativeVector(expected, hostMap2);
 }
 END_TEST
 
@@ -121,9 +121,9 @@ BEGIN_TEST(AssociativeVector_03_ConstructFromArray_Const)
 		expected.name.c_str()
 	);
 	const constHostMap hostMap1(expected.list, expected.list + expected.count);
-	assertAssociativeVector(expected, hostMap1, constHostMap);
+	assertAssociativeVector(expected, hostMap1);
 	const constHostMap hostMap2(rawList2);
-	assertAssociativeVector(expected, hostMap2, constHostMap);
+	assertAssociativeVector(expected, hostMap2);
 }
 END_TEST
 
