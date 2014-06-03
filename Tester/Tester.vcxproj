@@ -71,11 +71,13 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>cd /d "$(TargetDir)"
+      <Command>cd /d "$(SolutionDir)"
+doxygen.exe Doxyfile
+cd /d "$(TargetDir)"
 WinUnit "$(TargetPath)"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Unit Test</Message>
+      <Message>Doxygen &amp; Unit Test</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

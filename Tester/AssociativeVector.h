@@ -17,21 +17,25 @@ template<
 	typename VALUE
 >
 class AssociativeVector {
+	typedef std::pair<KEY, VALUE> BasePair;
 public:
 	struct Pair :
-		public std::pair<KEY, VALUE>
+		public BasePair
 	{
 		Pair(
 			const KEY& Key,
 			const VALUE& Value = VALUE()
 		):
-			std::pair<KEY, VALUE>(Key, Value)
+			BasePair(Key, Value)
 		{}
 
+		/**
+			Copy constructor
+		*/
 		Pair(
-			const std::pair<KEY, VALUE>& other
+			const BasePair& other
 		):
-			std::pair<KEY, VALUE>(other)
+			BasePair(other)
 		{}
 
 		/**
@@ -40,9 +44,8 @@ public:
 		Pair(
 			Pair&& other
 		):
-			std::pair<KEY, VALUE>()
+			BasePair(other)
 		{
-			*this = std::move(other);
 		}
 
 		/**
@@ -65,19 +68,20 @@ public:
 			const Pair& other
 		){
 			if ( this != &other ){
-				*this = Pair(other);
+				BasePair::operaor=(Pair(other));
+//				*this = Pair(other);
 			}
 			return *this;
 		}
 
 		/**
-			Assignment operator overload from std::pair<br>
+			Assignment operator overload from BasePair<br>
 			for make_pair macro
 		*/
 		Pair& operator=(
-			const std::pair<KEY, VALUE>& other
+			const BasePair& other
 		){
-			*(std::pair<KEY, VALUE>*)this = other;
+			BasePair::operaor=(other);
 			return *this;
 		}
 
@@ -155,16 +159,20 @@ public:
 		Adds an element to the end of the vector.
 	*/
 	void insert(const Pair& Val){
-		_list.push_back(Val);
-		std::sort(_list.begin(), _list.end());
+//		_list.push_back(Val);
+//		std::sort(_list.begin(), _list.end());
+		auto itr = lower_bound(_list.begin(), _list.end(), Val);
+		_list.insert(itr, Val);
 	}
 
 	/**
 		Adds an element to the end of the vector.
 	*/
 	void insert(Pair&& Val){
-		_list.push_back(Val);
-		std::sort(_list.begin(), _list.end());
+//		_list.push_back(Val);
+//		std::sort(_list.begin(), _list.end());
+		auto itr = lower_bound(_list.begin(), _list.end(), Val);
+		_list.insert(itr, Val);
 	}
 
 	void erase(iterator Pos){
