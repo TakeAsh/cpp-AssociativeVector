@@ -18,6 +18,7 @@ template<
 >
 class AssociativeVector {
 	typedef std::pair<KEY, VALUE> BasePair;
+
 public:
 	struct Pair :
 		public BasePair
@@ -32,28 +33,19 @@ public:
 		/**
 			Copy constructor
 		*/
-		Pair(
-			const BasePair& other
-		):
-			BasePair(other)
-		{}
+//		Pair(const Pair& other): BasePair(other) {}
+
+		Pair(const BasePair& other): BasePair(other) {}
 
 		/**
 			Move constructor
 		*/
-		Pair(
-			Pair&& other
-		):
-			BasePair(other)
-		{
-		}
+//		Pair(Pair&& other): BasePair(other) {}
 
 		/**
 			Move assignment operator
 		*/
-		Pair& operator=(
-			Pair&& other
-		){
+		Pair& operator=(Pair&& other){
 			if ( this != &other ){
 				*this = std::move(other);
 			}
@@ -64,12 +56,9 @@ public:
 			Assignment operator overload<br>
 			for constructing from const array
 		*/
-		Pair& operator=(
-			const Pair& other
-		){
+		Pair& operator=(const Pair& other){
 			if ( this != &other ){
-				BasePair::operaor=(Pair(other));
-//				*this = Pair(other);
+				BasePair::operaor=(BasePair(other));
 			}
 			return *this;
 		}
@@ -78,11 +67,16 @@ public:
 			Assignment operator overload from BasePair<br>
 			for make_pair macro
 		*/
-		Pair& operator=(
-			const BasePair& other
-		){
-			BasePair::operaor=(other);
-			return *this;
+//		Pair& operator=(const BasePair& other){
+//			BasePair::operaor=(other);
+//			return *this;
+//		}
+
+		/**
+			Equality operator overload
+		*/
+		bool operator==(const Pair& other) const {
+			return first == other.first;
 		}
 
 		/**
@@ -107,8 +101,7 @@ public:
 
 	AssociativeVector(void):
 		_list()
-	{
-	}
+	{}
 
 	template <class InputIterator>
 	AssociativeVector(InputIterator First, InputIterator Last):
@@ -137,7 +130,8 @@ public:
 		@retval	==NULL	not found
 	*/
 	const VALUE* operator[](const KEY Key) const {
-		auto itr = lower_bound(_list.begin(), _list.end(), Pair(Key));
+//		auto itr = lower_bound(_list.begin(), _list.end(), Pair(Key));
+		auto itr = std::find(_list.begin(), _list.end(), Pair(Key));
 		return itr != _list.end()
 			? &itr->second
 			: NULL;
@@ -150,6 +144,7 @@ public:
 	*/
 	VALUE* operator[](const KEY Key){
 		auto itr = lower_bound(_list.begin(), _list.end(), Pair(Key));
+//		auto itr = std::find(_list.begin(), _list.end(), Pair(Key));
 		return itr != _list.end()
 			? &itr->second
 			: NULL;
