@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <utility>
 #include <vector>
 #include <algorithm>
 
@@ -17,73 +18,12 @@ template<
 	typename VALUE
 >
 class AssociativeVector {
-	typedef std::pair<KEY, VALUE> BasePair;
-
 public:
-	struct Pair :
-		public BasePair
-	{
-		Pair(
-			const KEY& Key,
-			const VALUE& Value = VALUE()
-		):
-			BasePair(Key, Value)
-		{}
+	typedef std::pair<KEY, VALUE> Pair;
 
-		/**
-			Copy constructor
-		*/
-//		Pair(const Pair& other): BasePair(other) {}
-
-		Pair(const BasePair& other): BasePair(other) {}
-
-		/**
-			Move constructor
-		*/
-//		Pair(Pair&& other): BasePair(other) {}
-
-		/**
-			Move assignment operator
-		*/
-		Pair& operator=(Pair&& other){
-			if ( this != &other ){
-				*this = std::move(other);
-			}
-			return *this;
-		}
-
-		/**
-			Assignment operator overload<br>
-			for constructing from const array
-		*/
-		Pair& operator=(const Pair& other){
-			if ( this != &other ){
-				BasePair::operaor=(BasePair(other));
-			}
-			return *this;
-		}
-
-		/**
-			Assignment operator overload from BasePair<br>
-			for make_pair macro
-		*/
-//		Pair& operator=(const BasePair& other){
-//			BasePair::operaor=(other);
-//			return *this;
-//		}
-
-		/**
-			Equality operator overload
-		*/
-		bool operator==(const Pair& other) const {
-			return first == other.first;
-		}
-
-		/**
-			Less operator overload
-		*/
-		bool operator<(const Pair& other) const {
-			return first < other.first;
+	struct PairComp {
+		bool operator()(const Pair& lhs, const Pair& rhs) const {
+			return lhs.first < rhs.first;
 		}
 	};
 
@@ -107,14 +47,14 @@ public:
 	AssociativeVector(InputIterator First, InputIterator Last):
 		_list(First, Last)
 	{
-		std::sort(_list.begin(), _list.end());
+		std::sort(_list.begin(), _list.end(), PairComp());
 	}
 	
 	template<size_t SIZE>
 	AssociativeVector(const Pair (&array)[SIZE]):
 		_list(array, array + SIZE)
 	{
-		std::sort(_list.begin(), _list.end());
+		std::sort(_list.begin(), _list.end(), PairComp());
 	}
 		
 	/**
@@ -130,8 +70,8 @@ public:
 		@retval	==NULL	not found
 	*/
 	const VALUE* operator[](const KEY Key) const {
-//		auto itr = lower_bound(_list.begin(), _list.end(), Pair(Key));
-		auto itr = std::find(_list.begin(), _list.end(), Pair(Key));
+		auto itr = lower_bound(_list.begin(), _list.end(), Pair(Key, VALUE()), PairComp());
+//		auto itr = std::find(_list.begin(), _list.end(), Pair(Key, VALUE()));
 		return itr != _list.end()
 			? &itr->second
 			: NULL;
@@ -143,8 +83,8 @@ public:
 		@retval	==NULL	not found
 	*/
 	VALUE* operator[](const KEY Key){
-		auto itr = lower_bound(_list.begin(), _list.end(), Pair(Key));
-//		auto itr = std::find(_list.begin(), _list.end(), Pair(Key));
+		auto itr = lower_bound(_list.begin(), _list.end(), Pair(Key, VALUE()), PairComp());
+//		auto itr = std::find(_list.begin(), _list.end(), Pair(Key, VALUE()));
 		return itr != _list.end()
 			? &itr->second
 			: NULL;
@@ -156,7 +96,7 @@ public:
 	void insert(const Pair& Val){
 //		_list.push_back(Val);
 //		std::sort(_list.begin(), _list.end());
-		auto itr = lower_bound(_list.begin(), _list.end(), Val);
+		auto itr = lower_bound(_list.begin(), _list.end(), Val, PairComp());
 		_list.insert(itr, Val);
 	}
 
@@ -166,7 +106,7 @@ public:
 	void insert(Pair&& Val){
 //		_list.push_back(Val);
 //		std::sort(_list.begin(), _list.end());
-		auto itr = lower_bound(_list.begin(), _list.end(), Val);
+		auto itr = lower_bound(_list.begin(), _list.end(), Val, PairComp());
 		_list.insert(itr, Val);
 	}
 
